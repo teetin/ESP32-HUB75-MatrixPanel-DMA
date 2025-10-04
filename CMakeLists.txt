@@ -5,10 +5,16 @@
 cmake_minimum_required(VERSION 3.5)
 idf_build_get_property(target IDF_TARGET)
 
-if(ARDUINO_ARCH_ESP32 OR CONFIG_ESP32_HUB75_USE_GFX)
-    list(APPEND build_dependencies arduino Adafruit-GFX-Library)
+if(ARDUINO_ARCH_ESP32)
+     list(APPEND build_dependencies arduino)
+endif()
+
+if(CONFIG_ESP32_HUB75_USE_GFX)
+    list(APPEND build_dependencies Adafruit-GFX-Library esp_lcd driver)
 else()
-    list(APPEND build_dependencies esp_lcd driver)
+    if(CONFIG_ESP32_HUB75_USE_GFX_LITE)
+      list(APPEND build_dependencies GFX_Lite driver)
+    endif()
 endif()
 
 if(${target} STREQUAL "esp32s3")
@@ -48,12 +54,19 @@ endforeach()
 
 # esp-idf does not have any GFX library support yet, so we need to define NO_GFX
 if(ARDUINO_ARCH_ESP32 OR CONFIG_ESP32_HUB75_USE_GFX)
+
 else()
-    target_compile_options(${COMPONENT_TARGET} PUBLIC -DNO_GFX)
+    if (CONFIG_ESP32_HUB75_USE_GFX_LITE)
+      target_compile_options(${COMPONENT_TARGET} PUBLIC -DUSE_GFX_LITE)
+    else()
+      # No GFX library support
+      target_compile_options(${COMPONENT_TARGET} PUBLIC -DNO_GFX)
+    endif()
+    
     if(${target} STREQUAL "esp32s3")
 		# Don't enable PSRAM based framebuffer just because it's an S3.
 		# This is an advanced option and should only be used with an S3 with Octal-SPI RAM.
-        # target_compile_options(${COMPONENT_TARGET} PUBLIC -DSPIRAM_FRAMEBUFFER)
+    # target_compile_options(${COMPONENT_TARGET} PUBLIC -DSPIRAM_FRAMEBUFFER)
 		target_compile_options(${COMPONENT_TARGET} PUBLIC)
     endif()
 endif()

@@ -8,8 +8,6 @@
 #include <esp_log.h>
 #include "esp_attr.h"
 #include "esp_heap_caps.h"
-
-// #include <Arduino.h>
 #include "platforms/platform_detect.hpp"
 
 #ifdef USE_GFX_LITE
@@ -595,11 +593,11 @@ public:
     
   }
   // rgb888 overload
-  virtual inline void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t r, uint8_t g, uint8_t b)
+  virtual inline void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color)
   {
     
     transform(x, y, w, h);
-    fillRectDMA(x, y, w, h, r, g, b);
+    fillRectDMA(x, y, w, h, color.red, color.green, color.blue);
     
   }
 #endif
