@@ -37,7 +37,7 @@ Contributors:
 //#include <driver/i2s.h>
 #include <rom/lldesc.h>
 #include <rom/gpio.h>
-#if (ESP_IDF_VERSION_MAJOR == 5)
+#if (ESP_IDF_VERSION_MAJOR >= 5)
 #include <driver/i2s_types.h> //includes struct and reg
 #else
 #include <driver/i2s.h>

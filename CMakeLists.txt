@@ -28,6 +28,7 @@ endif()
 
 idf_component_register(SRCS "src/platforms/esp32/esp32_i2s_parallel_dma.cpp" "src/ESP32-HUB75-MatrixPanel-I2S-DMA.cpp" "src/ESP32-HUB75-MatrixPanel-leddrivers.cpp" ${extra_srcs}
                        INCLUDE_DIRS "./src"
+                       REQUIRES esp_driver_gpio esp_driver_i2s esp_driver_dma
                        )
 
 # Dependencies cannot be added to the REQUIRES argument of `idf_component_register` because (according to the build process
