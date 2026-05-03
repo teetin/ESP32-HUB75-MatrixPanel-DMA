@@ -3,6 +3,10 @@
 
 */
 
+#include "platforms/platform_detect.hpp"
+
+#if !defined(HUB75_GPIO_DRIVER_ONLY)
+
 #include <driver/gpio.h>
 
 #ifdef ARDUINO_ARCH_ESP32
@@ -189,3 +193,5 @@ void MatrixPanel_I2S_DMA::dp3246init(const HUB75_I2S_CFG& _cfg) {
     gpio_set_level((gpio_num_t)_cfg.gpio.oe, LOW); // enable Display
     CLK_PULSE
 }
+
+#endif // !HUB75_GPIO_DRIVER_ONLY

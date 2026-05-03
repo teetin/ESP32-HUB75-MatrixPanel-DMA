@@ -380,6 +380,28 @@ private:
 }; // end of structure HUB75_I2S_CFG
 
 /***************************************************************************************/
+#if defined(HUB75_GPIO_DRIVER_ONLY)
+
+#include "ESP32-HUB75-MatrixPanel-GPIO.h"
+
+class MatrixPanel_I2S_DMA : public MatrixPanel_GPIO
+{
+
+public:
+  MatrixPanel_I2S_DMA() : MatrixPanel_GPIO(HUB75_GPIO_CFG()) {}
+  MatrixPanel_I2S_DMA(const HUB75_I2S_CFG &opts) : MatrixPanel_GPIO(HUB75_GPIO_CFG(opts.mx_width, opts.mx_height, opts.chain_length, {opts.gpio.r1, opts.gpio.g1, opts.gpio.b1, opts.gpio.r2, opts.gpio.g2, opts.gpio.b2, opts.gpio.a, opts.gpio.b, opts.gpio.c, opts.gpio.d, opts.gpio.e, opts.gpio.lat, opts.gpio.oe, opts.gpio.clk}, 8, opts.double_buff, (HUB75_GPIO_CFG::shift_driver)opts.driver)) {}
+
+  // Compatibility begin overloads
+  bool begin(int r1, int g1 = G1_PIN_DEFAULT, int b1 = B1_PIN_DEFAULT, int r2 = R2_PIN_DEFAULT, int g2 = G2_PIN_DEFAULT, int b2 = B2_PIN_DEFAULT, int a = A_PIN_DEFAULT, int b = B_PIN_DEFAULT, int c = C_PIN_DEFAULT, int d = D_PIN_DEFAULT, int e = E_PIN_DEFAULT, int lat = LAT_PIN_DEFAULT, int oe = OE_PIN_DEFAULT, int clk = CLK_PIN_DEFAULT) {
+    return MatrixPanel_GPIO::begin();
+  }
+  bool begin(const HUB75_I2S_CFG &cfg) {
+    return MatrixPanel_GPIO::begin();
+  }
+};
+
+#else // !HUB75_GPIO_DRIVER_ONLY
+
 #ifndef HUB75_NO_GFX
 class MatrixPanel_I2S_DMA : public HUB75_GFX_PARENT
 {
@@ -904,6 +926,10 @@ private:
 
 }; // end Class header
 
+#endif // HUB75_GPIO_DRIVER_ONLY
+
+#if !defined(HUB75_GPIO_DRIVER_ONLY)
+
 /***************************************************************************************/
 // https://stackoverflow.com/questions/5057021/why-are-c-inline-functions-in-the-header
 /* 2. functions declared in the header must be marked inline because otherwise, every translation unit which includes the header will contain a definition of the function, and the linker will complain about multiple definitions (a violation of the One Definition Rule). The inline keyword suppresses this, allowing multiple translation units to contain (identical) definitions. */
@@ -974,6 +1000,8 @@ inline uint16_t MatrixPanel_I2S_DMA::color565(uint8_t r, uint8_t g, uint8_t b)
 {
   return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
 }
+
+#endif // !HUB75_GPIO_DRIVER_ONLY
 
 #endif
 
