@@ -63,6 +63,16 @@ public:
     virtual void drawPixel(int16_t x, int16_t y, uint16_t color);
     virtual void fillScreen(uint16_t color);
 
+#ifdef HUB75_USE_LVGL
+    /**
+     * @brief - draw LVGL bitmap
+     * @param x,y - coordinates
+     * @param w,h - width and height
+     * @param data - pointer to LVGL color buffer (lv_color_t*)
+     */
+    void drawLVGLBitmap(int16_t x, int16_t y, int16_t w, int16_t h, const void* data);
+#endif
+
     void setBrightness(uint8_t b);
     void flipBuffer();
 

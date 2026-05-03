@@ -605,6 +605,16 @@ public:
 
   void drawIcon(int *ico, int16_t x, int16_t y, int16_t cols, int16_t rows);
 
+#ifdef HUB75_USE_LVGL
+  /**
+   * @brief - draw LVGL bitmap
+   * @param x,y - coordinates
+   * @param w,h - width and height
+   * @param data - pointer to LVGL color buffer (lv_color_t*)
+   */
+  void drawLVGLBitmap(int16_t x, int16_t y, int16_t w, int16_t h, const void* data);
+#endif
+
   // Colour 444 is a 4 bit scale, so 0 to 15, colour 565 takes a 0-255 bit value, so scale up by 255/15 (i.e. 17)!
   static uint16_t color444(uint8_t r, uint8_t g, uint8_t b) { return color565(r * 17, g * 17, b * 17); }
   static uint16_t color565(uint8_t r, uint8_t g, uint8_t b); // This is what is used by Adafruit GFX!

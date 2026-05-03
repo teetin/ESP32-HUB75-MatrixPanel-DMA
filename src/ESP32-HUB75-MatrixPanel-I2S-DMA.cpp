@@ -985,3 +985,42 @@ void MatrixPanel_I2S_DMA::fillRectDMA(int16_t x, int16_t y, int16_t w, int16_t h
 }
 
 #endif // NO_FAST_FUNCTIONS
+
+#ifdef HUB75_USE_LVGL
+/**
+ * @brief - draw LVGL bitmap
+ * @param x,y - coordinates
+ * @param w,h - width and height
+ * @param data - pointer to LVGL color buffer (lv_color_t*)
+ *
+ * NOTE: This implementation relies on CONFIG_LV_COLOR_DEPTH or LV_COLOR_DEPTH being defined.
+ * If neither are found, it defaults to 16-bit (RGB565).
+ */
+void MatrixPanel_I2S_DMA::drawLVGLBitmap(int16_t x, int16_t y, int16_t w, int16_t h, const void* data) {
+    if (!initialized) return;
+
+    int color_depth = 16;
+#if defined(CONFIG_LV_COLOR_DEPTH)
+    color_depth = CONFIG_LV_COLOR_DEPTH;
+#elif defined(LV_COLOR_DEPTH)
+    color_depth = LV_COLOR_DEPTH;
+#endif
+
+    if (color_depth == 16) {
+        uint16_t *colors = (uint16_t*)data;
+        for (int16_t j = 0; j < h; j++) {
+            for (int16_t i = 0; i < w; i++) {
+                drawPixel(x + i, y + j, *colors++);
+            }
+        }
+    } else {
+        uint32_t *colors = (uint32_t*)data;
+        for (int16_t j = 0; j < h; j++) {
+            for (int16_t i = 0; i < w; i++) {
+                uint32_t c = *colors++;
+                drawPixelRGB888(x + i, y + j, (uint8_t)(c >> 16), (uint8_t)(c >> 8), (uint8_t)c);
+            }
+        }
+    }
+}
+#endif
