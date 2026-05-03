@@ -34,6 +34,8 @@ if(CONFIG_ESP32_HUB75_USE_GFX)
   list(APPEND build_dependencies Adafruit-GFX-Library)
 elseif(CONFIG_ESP32_HUB75_USE_GFX_LITE)
   list(APPEND build_dependencies GFX_Lite)
+elseif(CONFIG_ESP32_HUB75_USE_LVGL)
+  list(APPEND REQUIRES lvgl)
 endif()
 
 idf_component_register(SRCS ${COMPONENT_SRCS}

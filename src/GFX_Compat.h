@@ -14,11 +14,16 @@
     #define HUB75_GFX_PARENT GFX
     #define HUB75_HAS_CRGB
 
-// 2. Check for NO_GFX
+// 2. Check for LVGL
+#elif defined(USE_LVGL) || defined(CONFIG_ESP32_HUB75_USE_LVGL)
+    #define HUB75_USE_LVGL
+    #define HUB75_NO_GFX
+
+// 3. Check for NO_GFX
 #elif defined(NO_GFX) || defined(CONFIG_ESP32_HUB75_NO_GFX)
     #define HUB75_NO_GFX
 
-// 3. Default to Adafruit_GFX
+// 4. Default to Adafruit_GFX
 #else
     #define HUB75_USE_ADAFRUIT_GFX
     #include "Adafruit_GFX.h"

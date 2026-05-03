@@ -20,6 +20,11 @@ menu "ESP32 HUB75 Configuration"
           bool "None"
           help
               Disable GFX library support.
+
+      config ESP32_HUB75_USE_LVGL
+          bool "LVGL"
+          help
+              This option enables use of the LVGL library.
   endchoice
 
 endmenu
