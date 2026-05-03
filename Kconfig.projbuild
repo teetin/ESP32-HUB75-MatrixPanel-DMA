@@ -1,14 +1,25 @@
 menu "ESP32 HUB75 Configuration"
 
-  config ESP32_HUB75_USE_GFX
-      bool "Use Adafruit GFX library."
-      default n
+  choice ESP32_HUB75_GFX_LIBRARY
+      prompt "GFX Library"
+      default ESP32_HUB75_USE_GFX_LITE
       help
-          This option enables use of the Adafruit GFX library using the `Adafruit-GFX-Library` component.
-  config ESP32_HUB75_USE_GFX_LITE
-      bool "Use GFXLite library."
-      default y
-      help
-          This option enables use of the GFX Lite library.
+          Select which GFX library to use.
+
+      config ESP32_HUB75_USE_GFX
+          bool "Adafruit GFX"
+          help
+              This option enables use of the Adafruit GFX library using the `Adafruit-GFX-Library` component.
+
+      config ESP32_HUB75_USE_GFX_LITE
+          bool "GFX Lite"
+          help
+              This option enables use of the GFX Lite library.
+
+      config ESP32_HUB75_NO_GFX
+          bool "None"
+          help
+              Disable GFX library support.
+  endchoice
 
 endmenu

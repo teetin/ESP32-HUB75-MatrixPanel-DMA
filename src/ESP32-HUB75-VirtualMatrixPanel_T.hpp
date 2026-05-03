@@ -37,11 +37,7 @@
 //#include <cstdint>
 #include "ESP32-HUB75-MatrixPanel-I2S-DMA.h"
 
-#ifdef USE_GFX_LITE
-  #include "GFX_Lite.h"
-#elif !defined(NO_GFX)
-  #include "Adafruit_GFX.h"
-#endif
+#include "GFX_Compat.h"
 
 // ----------------------------------------------------------------------
 // Data structures and enums
@@ -176,17 +172,11 @@ struct ScanTypeMapping {
 //	 - ScanTypeMapping: a policy type implementing a static "apply" function 
 //					   (default is ScanTypeMapping<STANDARD_TWO_SCAN>).
 //	 - ScaleFactor: a compile–time zoom factor (must be >= 1).
-#ifdef USE_GFX_LITE
+#ifndef HUB75_NO_GFX
 template <PANEL_CHAIN_TYPE ChainScanType,
 		  class ScanTypeMapping = ScanTypeMapping<STANDARD_TWO_SCAN>,
 		  int ScaleFactor = 1>
-class VirtualMatrixPanel_T : public GFX {
-public:
-#elif !defined(NO_GFX)
-template <PANEL_CHAIN_TYPE ChainScanType,
-		  class ScanTypeMapping = ScanTypeMapping<STANDARD_TWO_SCAN>,
-		  int ScaleFactor = 1>
-class VirtualMatrixPanel_T : public Adafruit_GFX {
+class VirtualMatrixPanel_T : public HUB75_GFX_PARENT {
 public:
 #else
 template <PANEL_CHAIN_TYPE ChainScanType,
@@ -203,12 +193,9 @@ public:
 						uint8_t _vmodule_cols,
 						uint8_t _panel_res_x,
 						uint8_t _panel_res_y)
-#ifdef USE_GFX_LITE
-	  : GFX(_vmodule_cols * _panel_res_x, _vmodule_rows * _panel_res_y),
-#elif !defined(NO_GFX)
-	  : Adafruit_GFX(_vmodule_cols * _panel_res_x, _vmodule_rows * _panel_res_y),
-#else
 	  :
+#ifndef HUB75_NO_GFX
+		HUB75_GFX_PARENT(_vmodule_cols * _panel_res_x, _vmodule_rows * _panel_res_y),
 #endif
 		panel_res_x(_panel_res_x),
 		panel_res_y(_panel_res_y),
@@ -267,7 +254,7 @@ public:
 		display->drawPixelRGB888(coords.x, coords.y, r, g, b);	
 	}
 
-#ifdef USE_GFX_LITE
+#ifdef HUB75_HAS_CRGB
 	inline void drawPixel(int16_t x, int16_t y, CRGB color) {
 		//VirtualCoords v = getCoords(x, y);
 		//display->drawPixel(v.x, v.y, color);
@@ -282,7 +269,7 @@ public:
 	}
 #endif
 
-#ifndef NO_GFX
+#ifndef HUB75_NO_GFX
 	inline void drawDisplayTest() {
 
 		// Call ourself as we need to re-map pixels if we're using our own ScanTypeMapping
@@ -338,7 +325,7 @@ public:
 	inline void setRotation(uint8_t rotate) {
 		if (rotate < 4)
 			_rotate = rotate;
-#ifdef NO_GFX
+#ifdef HUB75_NO_GFX
 		// When NO_GFX is defined, update _virtual_res_x/_virtual_res_y as needed.
 #else
 		uint8_t rotation = (rotate & 3);
@@ -372,7 +359,7 @@ public:
 	// VirtualCoords getCoords(int16_t virt_x, int16_t virt_y) {
 	void calcPhysicalToElectricalCoords(int16_t virt_x, int16_t virt_y) {
 		
-#ifdef NO_GFX
+#ifdef HUB75_NO_GFX
 		if (virt_x < 0 || virt_x >= _virtual_res_x || virt_y < 0 || virt_y >= _virtual_res_y) {
 #else
 		if (virt_x < 0 || virt_x >= _width || virt_y < 0 || virt_y >= _height) {
@@ -477,7 +464,7 @@ public:
 
 	}
 
-#ifdef NO_GFX
+#ifdef HUB75_NO_GFX
 	inline uint16_t width()	 const { return _virtual_res_x; }
 	inline uint16_t height() const { return _virtual_res_y; }
 #endif
