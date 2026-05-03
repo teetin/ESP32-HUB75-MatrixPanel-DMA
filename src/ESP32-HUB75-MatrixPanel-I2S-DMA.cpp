@@ -1,5 +1,7 @@
 #include "ESP32-HUB75-MatrixPanel-I2S-DMA.h"
 
+#if !defined(HUB75_GPIO_DRIVER_ONLY)
+
 #if defined(SPIRAM_DMA_BUFFER)
 // Sprite_TM saves the day again...
 // https://www.esp32.com/viewtopic.php?f=2&t=30584
@@ -1024,3 +1026,5 @@ void MatrixPanel_I2S_DMA::drawLVGLBitmap(int16_t x, int16_t y, int16_t w, int16_
     }
 }
 #endif
+
+#endif // !HUB75_GPIO_DRIVER_ONLY

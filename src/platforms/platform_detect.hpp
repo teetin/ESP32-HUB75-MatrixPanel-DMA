@@ -22,18 +22,26 @@ Modified heavily for the ESP32 HUB75 DMA library by:
 
  #include <sdkconfig.h>
 
+ #if defined(HUB75_FORCE_GPIO) || defined(CONFIG_ESP32_HUB75_FORCE_GPIO)
+  #define HUB75_GPIO_DRIVER_ONLY 1
+ #endif
+
  #if defined (CONFIG_IDF_TARGET_ESP32S2)
 
   //#pragma message "Compiling for ESP32-S2"
-  #include "esp32/esp32_i2s_parallel_dma.hpp"  
-  #include "esp32s2/esp32s2-default-pins.hpp"  
+  #ifndef HUB75_GPIO_DRIVER_ONLY
+    #include "esp32/esp32_i2s_parallel_dma.hpp"
+  #endif
+  #include "esp32s2/esp32s2-default-pins.hpp"
 
 
  #elif defined (CONFIG_IDF_TARGET_ESP32S3)
   
   //#pragma message "Compiling for ESP32-S3"
-  #include "esp32s3/gdma_lcd_parallel16.hpp"
-  #include "esp32s3/esp32s3-default-pins.hpp"    
+  #ifndef HUB75_GPIO_DRIVER_ONLY
+    #include "esp32s3/gdma_lcd_parallel16.hpp"
+  #endif
+  #include "esp32s3/esp32s3-default-pins.hpp"
   
   #if defined(SPIRAM_FRAMEBUFFER)
 	#pragma message "Use SPIRAM_DMA_BUFFER instead."
@@ -74,12 +82,17 @@ Modified heavily for the ESP32 HUB75 DMA library by:
   #define ESP32_THE_ORIG 1	
   //#include "esp32/esp32_i2s_parallel_dma.hpp"
   //#include "esp32/esp32_i2s_parallel_dma.h"
-  #include "esp32/esp32_i2s_parallel_dma.hpp"  
+  #ifndef HUB75_GPIO_DRIVER_ONLY
+    #include "esp32/esp32_i2s_parallel_dma.hpp"
+  #endif
   #include "esp32/esp32-default-pins.hpp"
 
 #elif defined(CONFIG_IDF_TARGET_ESP32C3) || defined(CONFIG_IDF_TARGET_ESP32H2) || defined(CONFIG_IDF_TARGET_ESP32C2)
 
   #pragma message "This device only supports the MatrixPanel_GPIO implementation, not the DMA-based one."
+  #ifndef HUB75_GPIO_DRIVER_ONLY
+    #define HUB75_GPIO_DRIVER_ONLY 1
+  #endif
 
  #else
     #error "Unknown platform."

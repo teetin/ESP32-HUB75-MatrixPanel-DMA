@@ -27,4 +27,11 @@ menu "ESP32 HUB75 Configuration"
               This option enables use of the LVGL library.
   endchoice
 
+  config ESP32_HUB75_FORCE_GPIO
+      bool "Force GPIO bit-bang driver"
+      default n
+      help
+          Force the use of the GPIO bit-bang driver even on platforms that support DMA/I2S.
+          This is useful for debugging or if the DMA driver is causing issues.
+
 endmenu

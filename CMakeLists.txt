@@ -8,13 +8,11 @@ idf_build_get_property(target IDF_TARGET)
 # ESP32-C3, H2, C2 etc. do not support I2S parallel output
 set(DMA_CAPABLE_TARGETS "esp32" "esp32s2" "esp32s3")
 
-if(NOT target IN_LIST DMA_CAPABLE_TARGETS)
-  # This device only supports the MatrixPanel_GPIO implementation
-  set(COMPONENT_SRCS "src/ESP32-HUB75-MatrixPanel-GPIO.cpp" "src/ESP32-HUB75-MatrixPanel-leddrivers.cpp")
-else()
-  set(COMPONENT_SRCS "src/ESP32-HUB75-MatrixPanel-I2S-DMA.cpp"
-                     "src/ESP32-HUB75-MatrixPanel-leddrivers.cpp"
-                     "src/platforms/esp32/esp32_i2s_parallel_dma.cpp")
+set(COMPONENT_SRCS "src/ESP32-HUB75-MatrixPanel-GPIO.cpp" "src/ESP32-HUB75-MatrixPanel-leddrivers.cpp")
+
+if(target IN_LIST DMA_CAPABLE_TARGETS AND NOT CONFIG_ESP32_HUB75_FORCE_GPIO)
+  list(APPEND COMPONENT_SRCS "src/ESP32-HUB75-MatrixPanel-I2S-DMA.cpp"
+                             "src/platforms/esp32/esp32_i2s_parallel_dma.cpp")
 
   if(target STREQUAL "esp32s3")
     list(APPEND COMPONENT_SRCS "src/platforms/esp32s3/gdma_lcd_parallel16.cpp")

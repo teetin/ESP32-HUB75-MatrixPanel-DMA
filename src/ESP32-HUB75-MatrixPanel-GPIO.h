@@ -76,6 +76,20 @@ public:
     void setBrightness(uint8_t b);
     void flipBuffer();
 
+    // Compatibility aliases
+    inline void setPanelBrightness(uint8_t b) { setBrightness(b); }
+    inline void setBrightness8(uint8_t b) { setBrightness(b); }
+    inline void clearScreen() { fillScreen(0); }
+    void drawPixelRGB888(int16_t x, int16_t y, uint8_t r, uint8_t g, uint8_t b);
+    void fillScreenRGB888(uint8_t r, uint8_t g, uint8_t b);
+    inline void flipDMABuffer() { flipBuffer(); }
+    inline void stopDMAoutput() { stop(); }
+
+#ifdef HUB75_NO_GFX
+    inline int16_t width() const { return m_cfg.mx_width * m_cfg.chain_length; }
+    inline int16_t height() const { return m_cfg.mx_height; }
+#endif
+
     // Colour conversion helpers
     static uint16_t color565(uint8_t r, uint8_t g, uint8_t b) {
         return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
