@@ -10,10 +10,8 @@
 
 MatrixPanel_GPIO::MatrixPanel_GPIO(const HUB75_GPIO_CFG& cfg)
     :
-#ifdef USE_GFX_LITE
-      GFX(cfg.mx_width * cfg.chain_length, cfg.mx_height),
-#elif !defined NO_GFX
-      Adafruit_GFX(cfg.mx_width * cfg.chain_length, cfg.mx_height),
+#ifndef HUB75_NO_GFX
+      HUB75_GFX_PARENT(cfg.mx_width * cfg.chain_length, cfg.mx_height),
 #endif
       m_cfg(cfg), m_backBufferIdx(0), m_brightness(128), m_initialized(false), m_refreshTaskHandle(NULL)
 {

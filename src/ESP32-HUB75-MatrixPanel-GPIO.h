@@ -12,11 +12,7 @@
 #include "soc/gpio_reg.h"
 #include "soc/gpio_struct.h"
 
-#ifdef USE_GFX_LITE
-  #include "GFX_Lite.h"
-#elif !defined NO_GFX
-  #include "Adafruit_GFX.h"
-#endif
+#include "GFX_Compat.h"
 
 struct HUB75_GPIO_CFG {
     enum shift_driver {
@@ -50,10 +46,8 @@ struct HUB75_GPIO_CFG {
     ) : mx_width(_w), mx_height(_h), chain_length(_chain), gpio(_pins), color_depth(_depth), double_buff(_double_buff), driver(_drv) {}
 };
 
-#ifdef USE_GFX_LITE
-class MatrixPanel_GPIO : public GFX
-#elif !defined NO_GFX
-class MatrixPanel_GPIO : public Adafruit_GFX
+#ifndef HUB75_NO_GFX
+class MatrixPanel_GPIO : public HUB75_GFX_PARENT
 #else
 class MatrixPanel_GPIO
 #endif

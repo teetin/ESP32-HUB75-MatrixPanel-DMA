@@ -10,12 +10,7 @@
 #include "esp_heap_caps.h"
 #include "platforms/platform_detect.hpp"
 
-#ifdef USE_GFX_LITE
-  // Slimmed version of Adafruit GFX + FastLED: https://github.com/mrcodetastic/GFX_Lite
-  #include "GFX_Lite.h" 
-#elif !defined NO_GFX
-  #include "Adafruit_GFX.h" // Adafruit class with all the other stuff
-#endif
+#include "GFX_Compat.h"
 
 /*******************************************************************************************
  * COMPILE-TIME OPTIONS - MUST BE PROVIDED as part of PlatformIO project build_flags.      *
@@ -385,12 +380,8 @@ private:
 }; // end of structure HUB75_I2S_CFG
 
 /***************************************************************************************/
-#ifdef USE_GFX_LITE
-// Slimmed version of Adafruit GFX + FastLED: https://github.com/mrcodetastic/GFX_Lite
-class MatrixPanel_I2S_DMA : public GFX
-{
-#elif !defined NO_GFX
-class MatrixPanel_I2S_DMA : public Adafruit_GFX
+#ifndef HUB75_NO_GFX
+class MatrixPanel_I2S_DMA : public HUB75_GFX_PARENT
 {
 #else
 class MatrixPanel_I2S_DMA
@@ -406,10 +397,8 @@ public:
    *
    */
   MatrixPanel_I2S_DMA()
-#ifdef USE_GFX_LITE
-      : GFX(MATRIX_WIDTH, MATRIX_HEIGHT)
-#elif !defined NO_GFX
-      : Adafruit_GFX(MATRIX_WIDTH, MATRIX_HEIGHT)
+#ifndef HUB75_NO_GFX
+      : HUB75_GFX_PARENT(MATRIX_WIDTH, MATRIX_HEIGHT)
 #endif
   {
   }
@@ -421,10 +410,8 @@ public:
    *
    */
   MatrixPanel_I2S_DMA(const HUB75_I2S_CFG &opts)
-#ifdef USE_GFX_LITE
-      : GFX(opts.mx_width * opts.chain_length, opts.mx_height)
-#elif !defined NO_GFX
-      : Adafruit_GFX(opts.mx_width * opts.chain_length, opts.mx_height)
+#ifndef HUB75_NO_GFX
+      : HUB75_GFX_PARENT(opts.mx_width * opts.chain_length, opts.mx_height)
 #endif
   {
     setCfg(opts);
@@ -605,13 +592,13 @@ public:
   void fillScreenRGB888(uint8_t r, uint8_t g, uint8_t b);
   void drawPixelRGB888(int16_t x, int16_t y, uint8_t r, uint8_t g, uint8_t b);
 
-#ifdef USE_GFX_LITE
+#ifdef HUB75_HAS_CRGB
   // 24bpp FASTLED CRGB colour struct support
   void fillScreen(CRGB color);
   void drawPixel(int16_t x, int16_t y, CRGB color);
 #endif
 
-#ifdef NO_GFX
+#ifdef HUB75_NO_GFX
     inline int16_t width() const { return m_cfg.mx_width * m_cfg.chain_length; }
     inline int16_t height() const { return m_cfg.mx_height; }
 #endif
@@ -835,7 +822,7 @@ private:
    */
   void transform(int16_t &x, int16_t &y, int16_t &w, int16_t &h)
   {
-#ifndef NO_GFX
+#ifndef HUB75_NO_GFX
     int16_t t;
     switch (rotation)
     {
@@ -956,7 +943,7 @@ inline void MatrixPanel_I2S_DMA::fillScreenRGB888(uint8_t r, uint8_t g, uint8_t 
   updateMatrixDMABuffer(r, g, b); // RGB only (no pixel coordinate) version of 'updateMatrixDMABuffer'
 }
 
-#ifdef USE_GFX_LITE
+#ifdef HUB75_HAS_CRGB
 // Support for CRGB values provided via FastLED
 inline void MatrixPanel_I2S_DMA::drawPixel(int16_t x, int16_t y, CRGB color)
 {
